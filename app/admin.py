@@ -37,31 +37,3 @@ class article_admin(admin.ModelAdmin):
 
 admin.site.register(Article, article_admin)
 
-
-from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
-from django.contrib.auth.forms import UserChangeForm, UserCreationForm
-from .forms import RememberMeAuthenticationForm
-
-
-class CustomUserChangeForm(UserChangeForm):
-    class Meta:
-        model = User
-        fields = '__all__'
-
-
-class CustomUserCreationForm(UserCreationForm):
-    class Meta:
-        model = User
-        fields = ('username', 'email')
-
-
-class CustomUserAdmin(UserAdmin):
-    form = CustomUserChangeForm
-    add_form = CustomUserCreationForm
-    login_form = RememberMeAuthenticationForm
-
-
-admin.site.unregister(User)
-admin.site.register(User, CustomUserAdmin)
-

@@ -1,75 +1,36 @@
 from hashlib import sha256
-
-from django.contrib.auth import login, authenticate
+from django.contrib.auth.views import LoginView
+from django.contrib.auth import authenticate
+from django.http import JsonResponse
 from django.contrib.auth.models import User
-from django.http import HttpResponse, JsonResponse
-from django.shortcuts import redirect, render
-from pip._internal.utils._jaraco_text import _
+from app.forms import LoginForm
 
 
-def my_login_view(request):
+class UpdatedLoginView(LoginView):
+    form_class = LoginForm
 
-    global remember_me
-    if request.method == 'POST':
-        password = request.POST.get('password')
-        remember_me = request.POST.get('remember_me')
+    def form_valid(self, form):
+        global remember_me
+        password = form.cleaned_data['password']
         cookie_key = sha256(password.encode()).hexdigest()
-        cookies_user = request.COOKIES.get(cookie_key)
-
+        cookies_user = self.request.COOKIES.get(cookie_key)
         if cookies_user is None:
-            username = request.POST.get('username')
-            remember_me = request.POST.get('remember_me')
-            response_data = {'Message': 'You are successfully logged in', 'remember_me': remember_me}
-
+            username = form.cleaned_data['username']
+            remember_me = form.cleaned_data.get('remember_me')
+            response_data = {'Message': 'You are successfully logged in'}
         else:
             username = cookies_user
-            response_data = {'Message': 'You are successfully logged in', 'Username': cookies_user, 'remember_me': remember_me}
+            response_data = {'Message': 'You are successfully logged in', 'Username': cookies_user}
 
         user = User.objects.get(username=username)
         if user.check_password(password):
             auth = authenticate(username=user.username, password=password)
-
             if auth is not None:
                 response = JsonResponse(response_data, status=200)
-                print('======', response)
-                if cookies_user is None and remember_me is not None:
+                if cookies_user is None and remember_me:
                     response.set_cookie(cookie_key, username)
-                print('-----', response_data)
-                return render(request, 'admin/app_index.html', {'form': cookies_user, 'remember_me': remember_me}, status=200)
-
+                return super().form_valid(form)
             else:
-                return render(request, 'admin/login.html', {'form': 'username or password is invalid.', 'data': response_data}, status=400)
-
+                return JsonResponse({'Message': 'Invalid username or password.'}, status=400)
         else:
-            return render(request, 'admin/login.html', {'form': 'password is invalid', 'data': response_data}, status=400)
-
-    else:
-        return render(request, 'admin/login.html', {
-            'form': 'form',
-            'title': _('Log in'),
-        })
-
-    # if request.method == 'POST':
-    #     print(request.POST)
-    #     form = RememberMeAuthenticationForm(request.POST)
-    #     print('========', form.is_valid())
-    #     if form.is_valid():
-    #         user = form.get_user()
-    #         login(request, user)
-    #         # Check if the "Remember me" checkbox was checked
-    #         if form.cleaned_data.get('remember_me'):
-    #             # Set the session expiration time to 1 hour
-    #             request.session.set_expiry(3600)
-    #         else:
-    #             # Expire the session at browser close
-    #             request.session.set_expiry(0)
-    #         # Redirect to the admin index page
-    #         return redirect('admin:index')
-    # else:
-    #     form = RememberMeAuthenticationForm()
-    #     print('====', form)
-    #
-    # return render(request, 'admin/login.html', {
-    #     'form': form,
-    #     'title': _('Log in'),
-    # })
+            return JsonResponse({'Message': 'Invalid username or password.'}, status=400)

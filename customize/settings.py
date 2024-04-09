@@ -12,12 +12,6 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 
-# from app.forms import RememberMeAuthenticationForm
-
-# from app.forms import RememberMeAuthenticationForm
-# from .jazzmin import JAZZMIN_SETTINGS
-# import django
-# django.setup()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -49,6 +43,10 @@ INSTALLED_APPS = [
     'rest_framework',
 ]
 
+# settings.py
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 30  # One month
+
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -57,6 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'app.middleware.RememberMeMiddleware',
 ]
 
 ROOT_URLCONF = 'customize.urls'
@@ -72,6 +71,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # 'auth_remember.context_processors.auth_remember',
             ],
         },
     },
@@ -320,8 +320,8 @@ JAZZMIN_SETTINGS = {
 # }
 
 
-# AUTHENTICATION_BACKENDS = [
-#     'app.auth_backends.RememberMeBackend',  # Path to your custom backend
-#     'django.contrib.auth.backends.ModelBackend',  # Default backend
-# ]
+# AUTHENTICATION_BACKENDS = (
+#     'django.contrib.auth.backends.ModelBackend',
+#     'auth_remember.backend.AuthRememberBackend',
+# )
 
