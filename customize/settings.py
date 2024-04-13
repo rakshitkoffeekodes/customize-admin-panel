@@ -11,11 +11,10 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 import os
 from pathlib import Path
-
+from dataclasses import dataclass
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -27,7 +26,6 @@ SECRET_KEY = 'django-insecure-7a3qn=6o=-hg$2ib)n-(r_-mon&y!=2p%u@&f10jjx6ul)8c!i
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -46,7 +44,6 @@ INSTALLED_APPS = [
 # settings.py
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 30  # One month
 
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -55,7 +52,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'app.middleware.RememberMeMiddleware',
 ]
 
 ROOT_URLCONF = 'customize.urls'
@@ -79,7 +75,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'customize.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
@@ -89,7 +84,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -109,7 +103,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -120,7 +113,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
@@ -136,6 +128,8 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTHENTICATION_FORM = 'app.forms.RememberMeAuthenticationForm'
+
+table_name = ["auth.User", "auth.Group"]
 
 JAZZMIN_SETTINGS = {
     # title of the window (Will default to current_admin_site.site_title if absent or None)
@@ -172,7 +166,8 @@ JAZZMIN_SETTINGS = {
 
     # List of model admins to search from the search bar, search bar omitted if excluded
     # If you want to use a single search field you dont need to use a list, you can use a simple string
-    "search_model": ["auth.User", "auth.Group"],
+    "search_model": table_name,
+    "global_search": True,
 
     # Field name on user model that contains avatar ImageField/URLField/Charfield or a callable that receives the user
     "user_avatar": None,
@@ -262,7 +257,7 @@ JAZZMIN_SETTINGS = {
     # Whether to link font from fonts.googleapis.com (use custom_css to supply font otherwise)
     "use_google_fonts_cdn": True,
     # Whether to show the UI customizer on the sidebar
-    "show_ui_builder": True,
+    "show_ui_builder": False,
 
     "theme": "darkly",
     # "dark_mode_theme": "darkly",
@@ -283,9 +278,6 @@ JAZZMIN_SETTINGS = {
     "language_chooser": False,
 
 }
-
-
-
 
 # JAZZMIN_UI_TWEAKS = {
 #     "navbar_small_text": False,
@@ -324,4 +316,3 @@ JAZZMIN_SETTINGS = {
 #     'django.contrib.auth.backends.ModelBackend',
 #     'auth_remember.backend.AuthRememberBackend',
 # )
-

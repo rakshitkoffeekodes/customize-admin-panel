@@ -1,10 +1,7 @@
 from django.contrib import admin
-from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils.html import format_html
 from .models import *
-
-admin.site.register(Comment)
 
 
 def edit_and_delete_button(obj):
@@ -31,9 +28,18 @@ edit_and_delete_button.short_description = 'Action'
 
 class article_admin(admin.ModelAdmin):
     list_display = ["id", "title", "body", "created_on", edit_and_delete_button]
+    search_fields = ["title", "body"]
+    actions = None
+    list_display_links = None
+
+
+class comment_admin(admin.ModelAdmin):
+    list_display = ["id", "article", "text", "created_on", edit_and_delete_button]
+    search_fields = ["text"]
     actions = None
     list_display_links = None
 
 
 admin.site.register(Article, article_admin)
+admin.site.register(Comment, comment_admin)
 

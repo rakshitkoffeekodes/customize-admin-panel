@@ -18,15 +18,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
-from django.conf.urls.i18n import i18n_patterns
-
-from app.forms import LoginForm
 from app.views import UpdatedLoginView
 
 urlpatterns = [
                   path('admin/', admin.site.urls),
                   path('login/',
-                       UpdatedLoginView.as_view(redirect_authenticated_user=True, template_name='admin/login.html',
-                                                authentication_form=LoginForm), name='login_admin'),
+                       UpdatedLoginView.as_view(redirect_authenticated_user=True, template_name='admin/login.html'), name='login_admin'),
 
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
